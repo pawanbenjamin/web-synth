@@ -1,14 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
-
-import audioCtx from "./audioContext";
-
-const gain = audioCtx.createGain();
-const filter = audioCtx.createBiquadFilter();
-gain.connect(filter);
-filter.connect(audioCtx.destination);
+import App from "./components/App";
 
 ReactDOM.render(
   <React.StrictMode>

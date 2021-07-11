@@ -1,3 +1,5 @@
+import "./Controls.css";
+
 function Controls({ gainLvl, filterFreq, oscType, setOscType, gain, filter }) {
   return (
     <div className="controls">
@@ -6,6 +8,7 @@ function Controls({ gainLvl, filterFreq, oscType, setOscType, gain, filter }) {
         <option value="sine">Sine</option>
         <option value="square">Square</option>
       </select>
+
       <input
         type="range"
         min="0"

@@ -1,0 +1,26 @@
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  margin-bottom: 10px;
+}
+
+input,
+select {
+  height: 50px;
+  min-width: 50px;
+  padding: 10px;
+  border: none;
+  outline: none;
+  background: #dde1e7;
+  box-shadow: -3px -3px 7px #ffffff73, 2px 2px 5px rgba(94, 104, 121, 0.288);
+  /* background: #131419; */
+  /* box-shadow: 2px 2px 5px rgba(0,0,0,0.5),
+                  -3px -3px 7px rgba(255,255,255,0.05); */
+  margin: 10px;
+  color: grey;
+  /* color: #c7c7c7; */
+  font-size: 20px;
+  border-radius: 25px;
+  cursor: default;
+}

@@ -1,7 +1,7 @@
-/* eslint-disable react/no-direct-mutation-state */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-const audioCtx = new ( window.AudioContext || window.webkitAudioContext )
+audioCtx.onstatechange = function () {
+  console.log(audioCtx.state);
+};
 
-audioCtx.onstatechange = function(){console.log(audioCtx.state)}
-
-export default audioCtx
+export default audioCtx;
