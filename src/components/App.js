@@ -16,7 +16,7 @@ function App() {
   const [gainLvl, setGainLvl] = useState(50);
   const [filterFreq, setFilterFreq] = useState("10000");
   const [oscType, setOscType] = useState("sine");
-  const [octave, setOctave] = useState(0.125);
+  const [octave, setOctave] = useState(0.25);
   const [attack, setAttack] = useState(0.1);
   const [decay, setDecay] = useState(0.2);
   const [sustain, setSustain] = useState(0.5);
@@ -55,31 +55,45 @@ function App() {
   };
 
   useEffect(() => {
+    console.log(oscType);
+  }, [oscType]);
+
+  useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
-
-    gain.gain.linearRampToValueAtTime(1, 2);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [attack]);
+  }, []);
 
   useEffect(() => {
-    gain.gain.value = gainLvl;
-    filter.frequency.value = filterFreq;
-  }, [gainLvl, filterFreq]);
+    console.log(attack);
+    console.log(myAudioContext.audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(
+      1,
+      myAudioContext.audioCtx.currentTime + 4
+    );
+  }, [attack]);
 
   function playNote(key) {
     const osc = myAudioContext.audioCtx.createOscillator();
-    osc.frequency.setValueAtTime(
-      testFreqs[key] * octave,
-      myAudioContext.audioCtx.currentTime
-    );
-    osc.type = oscType;
+    osc.type = document.getElementById("waveform").value;
     activeOscillators[key] = osc;
     activeOscillators[key].connect(gain);
+    // try setting this to frequency.value, the using linear ramp to value, at current time plus attack
+    // osc.frequency.setValueAtTime(
+    //   testFreqs[key] * octave,
+    //   myAudioContext.audioCtx.currentTime
+    // );
+    osc.frequency.value = testFreqs[key];
+    let att = document.getElementById("attack").value;
+    console.log(att);
+    gain.gain.linearRampToValueAtTime(
+      1,
+      myAudioContext.audioCtx.currentTime + att
+    );
     activeOscillators[key].start(myAudioContext.audioCtx.currentTime);
   }
 

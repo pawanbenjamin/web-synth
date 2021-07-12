@@ -20,15 +20,22 @@ function Controls({
 }) {
   const { audioCtx, gain, filter } = useContext(MyContext);
 
+  console.log(gain);
+
   return (
     <div className="controls">
-      <select value={oscType} onChange={(e) => setOscType(e.target.value)}>
+      <select
+        id="waveform"
+        defaultValue={oscType}
+        onChange={(e) => setOscType(e.target.value)}
+      >
         <option value="sawtooth">SawTooth</option>
         <option value="sine">Sine</option>
         <option value="square">Square</option>
       </select>
 
       <input
+        id="attack"
         type="range"
         min="0"
         max="100"
@@ -51,15 +58,13 @@ function Controls({
       <input
         type="range"
         min="0"
-        max="0.2"
-        step="0.001"
+        max="0.5"
+        step="0.01"
         defaultValue={attack}
         onChange={(e) => {
-          setAttack(parseFloat(e.target.value));
-          gain.gain.linearRampToValueAtTime(
-            1,
-            parseFloat(audioCtx.currentTime) + attack
-          );
+          let parsedVal = parseFloat(e.target.value);
+          setAttack(parsedVal);
+    
         }}
       />
     </div>
