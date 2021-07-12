@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./App.css";
 
-// import Controls from "./Controls";
+import Controls from "./Controls";
 
-import audioCtx from "../audioContext.js";
+import { MyContext } from "../index";
+
 import Keyboard from "./Keyboard";
 
-const gain = audioCtx.createGain();
-const filter = audioCtx.createBiquadFilter();
-gain.connect(filter);
-filter.connect(audioCtx.destination);
-
 function App() {
+  let myAudioContext = useContext(MyContext);
+
+  const gain = myAudioContext.gain;
+  const filter = myAudioContext.filter;
+
   const [gainLvl, setGainLvl] = useState(50);
   const [filterFreq, setFilterFreq] = useState("10000");
   const [oscType, setOscType] = useState("sine");
@@ -57,11 +58,13 @@ function App() {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
+    gain.gain.linearRampToValueAtTime(1, 2);
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  });
+  }, [attack]);
 
   useEffect(() => {
     gain.gain.value = gainLvl;
@@ -69,12 +72,15 @@ function App() {
   }, [gainLvl, filterFreq]);
 
   function playNote(key) {
-    const osc = audioCtx.createOscillator();
-    osc.frequency.setValueAtTime(testFreqs[key] * octave, audioCtx.currentTime);
+    const osc = myAudioContext.audioCtx.createOscillator();
+    osc.frequency.setValueAtTime(
+      testFreqs[key] * octave,
+      myAudioContext.audioCtx.currentTime
+    );
     osc.type = oscType;
     activeOscillators[key] = osc;
     activeOscillators[key].connect(gain);
-    activeOscillators[key].start(audioCtx.currentTime);
+    activeOscillators[key].start(myAudioContext.audioCtx.currentTime);
   }
 
   function handleKeyDown(e) {
@@ -97,7 +103,6 @@ function App() {
   return (
     <div className="App">
       <Controls
-        audioCtx={audioCtx}
         gain={gain}
         filter={filter}
         gainLvl={gainLvl}
@@ -114,105 +119,6 @@ function App() {
         setSustainVal={setSustainVal}
       />
       <Keyboard />
-    </div>
-  );
-}
-
-function Controls({
-  gainLvl,
-  filterFreq,
-  oscType,
-  setOscType,
-  gain,
-  filter,
-  attack,
-  setAttack,
-  decay,
-  setDecay,
-  sustain,
-  setSustain,
-  sustainVal,
-  setSustainVal,
-  release,
-  setRelease,
-  audioCtx,
-}) {
-  return (
-    <div className="controls">
-      <select value={oscType} onChange={(e) => setOscType(e.target.value)}>
-        <option value="sawtooth">SawTooth</option>
-        <option value="sine">Sine</option>
-        <option value="square">Square</option>
-      </select>
-
-      <input
-        type="range"
-        min="0"
-        max="100"
-        step="1"
-        defaultValue={gainLvl}
-        onChange={(e) => {
-          gain.gain.value = e.target.value / 100;
-        }}
-      ></input>
-      <input
-        type="range"
-        min="20.0"
-        max="10000.0"
-        step="0.01"
-        defaultValue={filterFreq}
-        onChange={(e) => {
-          filter.frequency.value = e.target.value;
-        }}
-      ></input>
-      <input
-        type="range"
-        min="0"
-        max="0.2"
-        step="0.001"
-        defaultValue={attack}
-        onChange={(e) => {
-          setAttack(e.target.value);
-          let val = parseFloat(sustainVal);
-          console.log(audioCtx.currentTime);
-          let currTime = parseFloat(audioCtx.currentTime);
-          let att = parseFloat(attack);
-          let dec = parseFloat(decay);
-          gain.gain.linearRampToValueAtTime(val, currTime + att + dec);
-        }}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.001"
-        value="0.2"
-        defaultValue={decay}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.001"
-        value="0.3"
-        defaultValue={sustain}
-      />
-      <input
-        type="range"
-        min="0"
-        max="0.2"
-        step="0.001"
-        value="0.1"
-        defaultValue={sustainVal}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.001"
-        value="0.2"
-        defaultValue={release}
-      />
     </div>
   );
 }

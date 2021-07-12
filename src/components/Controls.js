@@ -1,3 +1,5 @@
+import react, { useEffect, useContext } from "react";
+import { MyContext } from "..";
 import "./Controls.css";
 
 function Controls({
@@ -5,8 +7,6 @@ function Controls({
   filterFreq,
   oscType,
   setOscType,
-  gain,
-  filter,
   attack,
   setAttack,
   decay,
@@ -17,8 +17,9 @@ function Controls({
   setSustainVal,
   release,
   setRelease,
-  audioCtx,
 }) {
+  const { audioCtx, gain, filter } = useContext(MyContext);
+
   return (
     <div className="controls">
       <select value={oscType} onChange={(e) => setOscType(e.target.value)}>
@@ -54,46 +55,12 @@ function Controls({
         step="0.001"
         defaultValue={attack}
         onChange={(e) => {
-          setAttack(e.target.value);
-          let val = parseFloat(sustainVal);
-          console.log(audioCtx.currentTime);
-          let currTime = parseFloat(audioCtx.currentTime);
-          let att = parseFloat(attack);
-          let dec = parseFloat(decay);
-          gain.gain.linearRampToValueAtTime(val, currTime + att + dec);
+          setAttack(parseFloat(e.target.value));
+          gain.gain.linearRampToValueAtTime(
+            1,
+            parseFloat(audioCtx.currentTime) + attack
+          );
         }}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.001"
-        value="0.2"
-        defaultValue={decay}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.001"
-        value="0.3"
-        defaultValue={sustain}
-      />
-      <input
-        type="range"
-        min="0"
-        max="0.2"
-        step="0.001"
-        value="0.1"
-        defaultValue={sustainVal}
-      />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.001"
-        value="0.2"
-        defaultValue={release}
       />
     </div>
   );
